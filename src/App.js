@@ -15,7 +15,7 @@ function App() {
     
     setError(null);
     try {
-      const response= await fetch('https://swapi.dev/api/films/');
+      const response= await fetch('https://react-moviesform-default-rtdb.firebaseio.com/movies.json');
      
       if(!response.ok){
      
@@ -23,19 +23,20 @@ function App() {
      
       }
       const data= await response.json();
+      console.log(data);
 
-         const transferData = data.results.map((moviedata)=>{
-           return {
-             id:moviedata.episode_id,
-             title:moviedata.title,
-             openingText:moviedata.opening_crawl,
-             releaseDate:moviedata.release_date
-     
-          
-           }
-         })
-    
-         setMovie (transferData);
+      const loadedMovies=[];
+      for(const key in data){
+        loadedMovies.push({
+          id:key,
+          title:data[key].title,
+          openingText:data[key].openingText,
+          releaseDate:data[key].releaseDate
+
+          })
+      }
+
+        setMovie (loadedMovies);
         
         
     } catch (error) {
@@ -54,21 +55,41 @@ function App() {
     fetchCase();
      },[fetchCase])
     
-     function addMovieHandler(movie){
-      console.log(movie);
+    async function addMovieHandler(movie){
+      const response= await fetch('https://react-moviesform-default-rtdb.firebaseio.com/movies.json',{
+        method:'POST',
+        body:JSON.stringify(movie),
+        headers:{
+          'Content-Type':'application/json'
+        }
+      })
+      const data= await response.json();
+      
      }
+
+
   let content=<p>No movie found.</p>
 if(error){
   content=<p>{error}</p>
 }
 if(movies.length>0){
- content= <MoviesList movies={movies} />
+ content= <MoviesList movies={movies} deleteMovie={deleteMovie} />
 }
   if(isLoading){
     content=<p>Loading...</p>
   }
   
- 
+  
+    async function deleteMovie(id) {
+     const response= await fetch(`https://react-moviesform-default-rtdb.firebaseio.com/movies/${id}.json`, {
+        method: "DELETE",
+      })
+      
+    const data= await response.json();
+    };
+    
+    
+
   return (
     <React.Fragment>
     <section>
