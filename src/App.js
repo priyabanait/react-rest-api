@@ -9,15 +9,17 @@ function App() {
 
   
  
- const fetchMovies = useCallback(async()=>{
+ const fetchCase= useCallback(async()=>{
     setIsLoading(true);
     
     setError(null);
     try {
-      const response= await fetch('https://swapi.dev/api/films/');
+      const response= await fetch('https://swapi.dev/api/film/');
      
       if(!response.ok){
-       throw new Error('Something went wrong!');
+     
+         throw new Error('Something went wrong...Retrying');
+     
       }
       const data= await response.json();
 
@@ -36,16 +38,22 @@ function App() {
         
         
     } catch (error) {
-      setError(error.message)
-    }
+      setError(error.message);
+     
+     setInterval(fetchCase,5000)
+   }
+   
+   
     setIsLoading(false);
     
   },[])
-
+  
+ 
   useEffect(()=>{
-    fetchMovies();
-     },[fetchMovies])
-
+    fetchCase();
+     },[fetchCase])
+    
+     
   let content=<p>No movie found.</p>
 if(error){
   content=<p>{error}</p>
@@ -56,14 +64,17 @@ if(movies.length>0){
   if(isLoading){
     content=<p>Loading...</p>
   }
+  
  
   return (
     <React.Fragment>
       <section>
-        <button onClick={fetchMovies}>Fetch Movies</button>
+        <button onClick={fetchCase}>Fetch Movies</button>
+       
       </section>
       <section>
        {content}
+       
       </section>
     </React.Fragment>
   );
