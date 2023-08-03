@@ -1,6 +1,7 @@
 import MoviesList from './components/MoviesList';
 import './App.css';
 import React, { useState ,useEffect, useCallback} from 'react';
+import AddMovie from './components/AddMovie';
 
 function App() {
   const[movies,setMovie]=useState([]);
@@ -14,7 +15,7 @@ function App() {
     
     setError(null);
     try {
-      const response= await fetch('https://swapi.dev/api/film/');
+      const response= await fetch('https://swapi.dev/api/films/');
      
       if(!response.ok){
      
@@ -53,7 +54,9 @@ function App() {
     fetchCase();
      },[fetchCase])
     
-     
+     function addMovieHandler(movie){
+      console.log(movie);
+     }
   let content=<p>No movie found.</p>
 if(error){
   content=<p>{error}</p>
@@ -68,6 +71,9 @@ if(movies.length>0){
  
   return (
     <React.Fragment>
+    <section>
+        <AddMovie onAddMovie={addMovieHandler} />
+      </section>
       <section>
         <button onClick={fetchCase}>Fetch Movies</button>
        
